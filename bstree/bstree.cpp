@@ -1,97 +1,169 @@
 #include <bits/stdc++.h>
+using namespace std;
 
-template <typename T> struct Node{
-    T key;
-    T value;
-    Node<T> *left;
-    Node<T> *right;
+struct bst_node {
+  int key;
+  int value;
+  struct bst_node *left;
+  struct bst_node *right;
 };
 
-template <typename T> class Bstree{
-    private:
-        Node<T> *root;
+bst_node *bst_alloc(void) {
+  bst_node *node = (bst_node *)malloc(sizeof(bst_node));
+  node->left = NULL;
+  node->right = NULL;
+  return node;
+}
 
-        Node<T> *insert(Node<T> *tree, T key, T value){
-            if(tree == nullptr){
-                tree = new Node<T>;
-                tree->key = key;
-                tree->value = value;
-                tree->left = nullptr;
-                tree->right = nullptr;
-            }
+void bst_insert(bst_node **tree, int key, int value) {
+  bst_node *parent = NULL;
+  bst_node *curr = *tree;
 
-            if(tree->key == key){
-                return tree;
-            }else if(tree->key > key){
-                tree->left = insert(tree->left, key, value);
-            }else {
-                tree->right = insert(tree->right, key, value);
-            }
+  while (curr != NULL) {
+    if (key == curr->key) {
+      return;
+    }
 
-            return tree;
-        }
+    parent = curr;
 
-        Node<T> *find_max(Node<T> *tree){
-            while(tree->right != nullptr){
-                tree = tree->right;
-            }
-            return tree;
-        }
+    if (key > curr->key) {
+      curr = curr->right;
+    } else {
+      curr = curr->left;
+    }
+  }
 
-        Node<T> *remove(Node<T> *tree, T key){
-            if (tree != nullptr){
-                if (tree->key > key){
-                    tree->left = remove(tree->left, key);
-                }else if(tree->key < key){
-                    tree->right = remove(tree->right, key);
-                }else{
-                    if (tree->left != nullptr && tree->right != nullptr){
-                        // While both children exist
-                        Node<T> *tmp = find_max(tree->left);
-                        tree->key = tmp->key;
-                        tree->value = tmp->value;
-                        tree->left = remove(tree->left, tmp->key);
-                    }else if(tree->left == nullptr && tree->right == nullptr){
-                        // While both children not exist
-                        delete tree;
-                        tree = nullptr;
-                    }
-                    else{
-                        // While only one child exists
-                        if (tree->left == nullptr){
-                            tree = tree->right;
-                        }else if(tree->right == nullptr){
-                            tree = tree->left;
-                        }
-                    }
-                } 
-            }else{
-                printf("Not Found %d!\n", key);
-                return tree;
-            }
-            return tree;
-        }
-        
-        void bst_inorder(Node<T> *tree){
-            if (tree != nullptr){
-                bst_inorder(tree->left);
-                printf("%d ", tree->key);
-                bst_inorder(tree->right);
-            }
-        };
+  curr = bst_alloc();
+  curr->key = key;
+  curr->value = value;
 
-    public:
-        Bstree(){
-            root = nullptr;
-        };
+  if (parent == NULL) {
+    *tree = curr;
+  } else if (key < parent->key) {
+    parent->left = curr;
+  } else {
+    parent->right = curr;
+  }
+}
 
-        void bst_insert(T key, T value){
-            root = insert(root, key, value);
-        };
-        void bst_remove(T key){
-            root = remove(root, key);
-        };
-        void bst_show(){
-            bst_inorder(root);
-        };
+void bst_erase(bst_node **tree, int key) {
+  bst_node *parent = NULL;
+  bst_node *curr = *tree;
+
+  while (curr != NULL && curr->key != key) {
+    parent = curr;
+
+    if (key < curr->key) {
+      curr = curr->left;
+    } else {
+      curr = curr->right;
+    }
+  }
+
+  if (curr == NULL) {
+    return;
+  }
+
+  // Both Children Nodes Exist
+  if (curr->left != NULL && curr->right != NULL) {
+    parent = curr;
+    bst_node *tmp = parent;
+
+    curr = curr->left;
+    while (curr->right != NULL) {
+      tmp = curr;
+      curr = curr->right;
+    }
+
+    parent->key = curr->key;
+    parent->value = curr->value;
+    parent = tmp;
+  }
+
+  // Both Children Nodes Don't Exist or Not
+  if (curr->left == NULL && curr->right == NULL) {
+    if (parent == NULL) {
+      *tree = NULL;
+    } else if (parent->left == curr) {
+      parent->left = NULL;
+    } else {
+      parent->right = NULL;
+    }
+  } else if (curr->left != NULL) {
+    if (parent == NULL) {
+      *tree = curr->left;
+    } else if (parent->left == curr) {
+      parent->left = curr->left;
+    } else {
+      parent->right = curr->left;
+    }
+  } else {
+    if (parent == NULL) {
+      *tree = curr->right;
+    } else if (parent->left == curr) {
+      parent->left = curr->right;
+    } else {
+      parent->right = curr->right;
+    }
+  }
+
+  free(curr);
+}
+
+void bst_inorder(bst_node *tree) {
+  if (tree != NULL) {
+    bst_inorder(tree->left);
+    printf("%d ", tree->key);
+    bst_inorder(tree->right);
+  }
+}
+
+struct Trunk {
+  Trunk *prev;
+  string str;
+
+  Trunk(Trunk *prev, string str) {
+    this->prev = prev;
+    this->str = str;
+  }
 };
+
+void showTrunks(Trunk *p) {
+  if (p == nullptr) {
+    return;
+  }
+  showTrunks(p->prev);
+  cout << p->str;
+}
+
+void bst_print(bst_node *tree, Trunk *prev, bool isLeft) {
+  if (tree == nullptr) {
+    return;
+  }
+
+  string prev_str = "    ";
+  Trunk *trunk = new Trunk(prev, prev_str);
+
+  bst_print(tree->right, trunk, true);
+
+  if (!prev) {
+    trunk->str = "———";
+  } else if (isLeft) {
+    trunk->str = "┏———";
+    prev->str = "   ";
+    prev_str = "   |";
+  } else {
+    trunk->str = "┗———";
+    prev->str = "   ";
+  }
+
+  showTrunks(trunk);
+  cout << tree->key << endl;
+
+  if (prev) {
+    prev->str = prev_str;
+  }
+  trunk->str = "   |";
+
+  bst_print(tree->left, trunk, false);
+}
