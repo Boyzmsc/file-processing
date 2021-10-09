@@ -118,52 +118,52 @@ void bst_inorder(bst_node *tree) {
   }
 }
 
-struct Trunk {
-  Trunk *prev;
+struct Path {
+  Path *prev;
   string str;
 
-  Trunk(Trunk *prev, string str) {
+  Path(Path *prev, string str) {
     this->prev = prev;
     this->str = str;
   }
 };
 
-void showTrunks(Trunk *p) {
+void showPath(Path *p) {
   if (p == nullptr) {
     return;
   }
-  showTrunks(p->prev);
+  showPath(p->prev);
   cout << p->str;
 }
 
-void bst_print(bst_node *tree, Trunk *prev, bool isLeft) {
+void bst_print(bst_node *tree, Path *prev, bool isRight) {
   if (tree == nullptr) {
     return;
   }
 
   string prev_str = "    ";
-  Trunk *trunk = new Trunk(prev, prev_str);
+  Path *p = new Path(prev, prev_str);
 
-  bst_print(tree->right, trunk, true);
+  bst_print(tree->right, p, true);
 
   if (!prev) {
-    trunk->str = "———";
-  } else if (isLeft) {
-    trunk->str = "┏———";
+    p->str = "───";
+  } else if (isRight) {
+    p->str = "┎───";
     prev->str = "   ";
-    prev_str = "   |";
+    prev_str = "   │";
   } else {
-    trunk->str = "┗———";
+    p->str = "┖───";
     prev->str = "   ";
   }
 
-  showTrunks(trunk);
+  showPath(p);
   cout << tree->key << endl;
 
   if (prev) {
     prev->str = prev_str;
   }
-  trunk->str = "   |";
+  p->str = "   │";
 
-  bst_print(tree->left, trunk, false);
+  bst_print(tree->left, p, false);
 }
