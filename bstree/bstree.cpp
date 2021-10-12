@@ -110,6 +110,21 @@ void bst_erase(bst_node **tree, int key) {
   free(curr);
 }
 
+int bst_search(bst_node *tree, int key) {
+  if (tree != NULL) {
+    if (tree->key == key) {
+      return tree->value;
+    } else if (key < tree->key) {
+      return bst_search(tree->left, key);
+    } else {
+      return bst_search(tree->right, key);
+    }
+  } else {
+    // Not Found
+    return -1;
+  }
+}
+
 void bst_inorder(bst_node *tree) {
   if (tree != NULL) {
     bst_inorder(tree->left);
@@ -129,7 +144,7 @@ struct Path {
 };
 
 void showPath(Path *p) {
-  if (p == nullptr) {
+  if (p == NULL) {
     return;
   }
   showPath(p->prev);
@@ -137,7 +152,7 @@ void showPath(Path *p) {
 }
 
 void bst_print(bst_node *tree, Path *prev, bool isRight) {
-  if (tree == nullptr) {
+  if (tree == NULL) {
     return;
   }
 
