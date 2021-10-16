@@ -307,6 +307,21 @@ void avl_erase(avl_node **tree, int key) {
   }
 }
 
+int avl_search(avl_node *tree, int key) {
+  if (tree != NULL) {
+    if (tree->key == key) {
+      return tree->value;
+    } else if (key < tree->key) {
+      return avl_search(tree->left, key);
+    } else {
+      return avl_search(tree->right, key);
+    }
+  } else {
+    // Not Found
+    return -1;
+  }
+}
+
 void avl_inorder(avl_node *tree) {
   if (tree != NULL) {
     avl_inorder(tree->left);
@@ -326,7 +341,7 @@ struct Path {
 };
 
 void showPath(Path *p) {
-  if (p == nullptr) {
+  if (p == NULL) {
     return;
   }
   showPath(p->prev);
@@ -334,7 +349,7 @@ void showPath(Path *p) {
 }
 
 void avl_print(avl_node *tree, Path *prev, bool isRight) {
-  if (tree == nullptr) {
+  if (tree == NULL) {
     return;
   }
 
@@ -344,13 +359,13 @@ void avl_print(avl_node *tree, Path *prev, bool isRight) {
   avl_print(tree->right, p, true);
 
   if (!prev) {
-    p->str = "───";
+    p->str = "---";
   } else if (isRight) {
-    p->str = "┎───";
+    p->str = ".---";
     prev->str = "   ";
-    prev_str = "   │";
+    prev_str = "   |";
   } else {
-    p->str = "┖───";
+    p->str = "\'---";
     prev->str = "   ";
   }
 
@@ -360,7 +375,7 @@ void avl_print(avl_node *tree, Path *prev, bool isRight) {
   if (prev) {
     prev->str = prev_str;
   }
-  p->str = "   │";
+  p->str = "   |";
 
   avl_print(tree->left, p, false);
 }
