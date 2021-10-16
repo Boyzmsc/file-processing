@@ -8,7 +8,7 @@ struct bst_node {
   struct bst_node *right;
 };
 
-bst_node *bst_alloc(void) {
+bst_node *bst_alloc() {
   bst_node *node = (bst_node *)malloc(sizeof(bst_node));
   node->left = NULL;
   node->right = NULL;
@@ -162,13 +162,13 @@ void bst_print(bst_node *tree, Path *prev, bool isRight) {
   bst_print(tree->right, p, true);
 
   if (!prev) {
-    p->str = "───";
+    p->str = "---";
   } else if (isRight) {
-    p->str = "┎───";
+    p->str = ".---";
     prev->str = "   ";
-    prev_str = "   │";
+    prev_str = "   |";
   } else {
-    p->str = "┖───";
+    p->str = "\'---";
     prev->str = "   ";
   }
 
@@ -178,7 +178,7 @@ void bst_print(bst_node *tree, Path *prev, bool isRight) {
   if (prev) {
     prev->str = prev_str;
   }
-  p->str = "   │";
+  p->str = "   |";
 
   bst_print(tree->left, p, false);
 }
