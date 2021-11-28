@@ -19,26 +19,26 @@ int main() {
 
   for (const int *it = testcases;
        it < testcases + sizeof(testcases) / sizeof(int) / 2; ++it) {
-    btree_insert(&tree, 3, *it, 0);
-    btree_inorder(tree, print);
+    insertBT(&tree, 3, *it);
+    inorderBT(tree);
     printf("\n");
   }
   for (const int *it = testcases + sizeof(testcases) / sizeof(int) / 2;
        it < testcases + sizeof(testcases) / sizeof(int); ++it) {
-    btree_erase(&tree, 3, *it);
-    btree_inorder(tree, print);
+    deleteBT(&tree, 3, *it);
+    inorderBT(tree);
     printf("\n");
   }
   for (const int *it = testcases;
        it < testcases + sizeof(testcases) / sizeof(int) / 2; ++it) {
-    btree_insert(&tree, 4, *it, 0);
-    btree_inorder(tree, print);
+    insertBT(&tree, 4, *it);
+    inorderBT(tree);
     printf("\n");
   }
   for (const int *it = testcases + sizeof(testcases) / sizeof(int) / 2;
        it < testcases + sizeof(testcases) / sizeof(int); ++it) {
-    btree_erase(&tree, 4, *it);
-    btree_inorder(tree, print);
+    deleteBT(&tree, 4, *it);
+    inorderBT(tree);
     printf("\n");
   }
 }
